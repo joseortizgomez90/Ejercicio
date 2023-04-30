@@ -1,9 +1,13 @@
 from flask import Flask, jsonify, request,g
 import pickle
 import psycopg2
+import os
+import pandas as pd 
 
 # Instanciamos la clase Flask
 app = Flask(__name__)
+
+
 
 # Urilizamos decoradores para definir las rutas de nuestro servidor web
 # Definimos la ruta principal y el método HTTP que va a escuchar
@@ -14,9 +18,9 @@ def home():
 
     """
 
-# Definimos la ruta para el endpoint /api/v1/predictions
-@app.route('/api/v1/predictions', methods=['GET'])
-def predictions():
+# Definimos la ruta para el endpoint /api/v1/predict
+@app.route('/api/v1/predict/', methods=['GET'])
+def predict():
     # Obtenemos los datos de la URL
     TV = request.args['TV']
     radio = request.args['radio']
@@ -37,23 +41,22 @@ def predictions():
 
 
 # 2.Ruta para añadir datos
-
-@app.route('/api/v1/retrain', methods=['POST'])
+@app.route('/resources/datos/add', methods=['POST'])
 def add_datos():
     # Obtener datos del cuerpo de la petición
-    new_data = request.get_json()
+    datos = request.get_json()
 
     # Almacenar los datos en variables
-    TV = new_data['TV']
-    radio = new_data['radio']
-    newspaper =['newspaper']
-    sales= new_data['sales']
+    TV = datos['TV']
+    radio = datos['radio']
+    newspaper = datos['newspaper']
+
    
 
     # Crear la conexión a la base de datos
-    conn = get_Adverstising.csv()
+    conn = get_db.csv()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Adverstising.csv (TV,radio,newspaper,sales) VALUES (%s, %s, %s, %s, %s)", (TV,radio,newspaper,sales))
+    cursor.execute("INSERT INTO db (TV,radio,newspaper) VALUES (%s, %s, %s)", (TV,radio,newspaper))
     conn.commit()
     cursor.close()
 
@@ -67,7 +70,7 @@ def add_datos():
     
 
 if __name__ == '__main__':
-    app.run(debug=True)
+     app.run(debug=True)
     
     
     
