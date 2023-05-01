@@ -4,6 +4,7 @@ import psycopg2
 import os
 import pandas as pd 
 
+
 # Instanciamos la clase Flask
 app = Flask(__name__)
 
@@ -22,9 +23,9 @@ def home():
 @app.route('/api/v1/predict/', methods=['GET'])
 def predict():
     # Obtenemos los datos de la URL
-    TV = request.args['TV']
-    radio = request.args['radio']
-    newspaper = request.args['newspaper']
+    TV = float(request.args['TV'])
+    radio = float(request.args['radio'])
+    newspaper = float(request.args['newspaper'])
     
  # Cargamos el modelo
     loaded_model = pickle.load(open('model.pkl', 'rb'))
@@ -38,36 +39,6 @@ def predict():
     prediction = loaded_model.predict([new_data])
     # Retornamos la predicción en formato JSON
     return jsonify({'prediction': prediction[0]})
-
-
-# 2.Ruta para añadir datos
-@app.route('/resources/datos/add', methods=['POST'])
-def add_datos():
-    # Obtener datos del cuerpo de la petición
-    datos = request.get_json()
-
-    # Almacenar los datos en variables
-    TV = datos['TV']
-    radio = datos['radio']
-    newspaper = datos['newspaper']
-
-   
-
-    # Crear la conexión a la base de datos
-    conn = get_db.csv()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO db (TV,radio,newspaper) VALUES (%s, %s, %s)", (TV,radio,newspaper))
-    conn.commit()
-    cursor.close()
-
-    return jsonify({'message': 'los datos han sido añadidos correctamente'})
-
-# Realizamos la predicción
-    new_prediction = loaded_model.predict([add_datos])
-    # Retornamos la predicción en formato JSON
-    return jsonify({'prediction': prediction[0]})
-
-    
 
 if __name__ == '__main__':
      app.run(debug=True)
